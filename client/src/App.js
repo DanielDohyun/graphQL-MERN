@@ -1,10 +1,10 @@
-import Header from "./components/Header";
-import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
-import Clients from "./components/Clients";
-import Projects from "./components/Projects";
-import AddClientModal from "./components/AddCliModal";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Header from './components/Header';
+import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
+import Home from './pages/Home';
+import Project from './pages/Project';
+import NotFound from './pages/NotFound';
 
-//to fix merge warning while caching updated client/project data
 const cache = new InMemoryCache({
   typePolicies: {
     Query: {
@@ -25,20 +25,24 @@ const cache = new InMemoryCache({
 });
 
 const client = new ApolloClient({
-  uri: "http://localhost:8000/graphql",
-  cache: cache,
+  uri: 'http://localhost:8000/graphql',
+  cache,
 });
 
 function App() {
   return (
     <>
       <ApolloProvider client={client}>
-        <Header />
-        <div className="container">
-          <AddClientModal />
-          <Projects />
-          <Clients />
-        </div>
+        <Router>
+          <Header />
+          <div className='container'>
+            <Routes>
+              <Route path='/' element={<Home />} />
+              <Route path='/projects/:id' element={<Project />} />
+              <Route path='*' element={<NotFound />} />
+            </Routes>
+          </div>
+        </Router>
       </ApolloProvider>
     </>
   );
