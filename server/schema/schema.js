@@ -105,6 +105,14 @@ const mutation = new GraphQLObjectType({
         id: { type: GraphQLNonNull(GraphQLID) },
       },
       resolve(parent, args) {
+        //remove any project associated with client that is being deleted 
+        Project.find({
+          clientId: args.id
+        }).then((projects) => {
+          projects.forEach(project => {
+            project.deleteOne();
+          })
+        });
         return Client.findByIdAndRemove(args.id);
       },
     },
